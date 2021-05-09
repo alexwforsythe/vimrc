@@ -396,6 +396,7 @@ endif
 
 " vim-plug: load plugins
 call plug#begin('~/.vim/plugged')
+Plug 'itchyny/lightline.vim'
 Plug 'preservim/nerdtree'
 Plug 'chriskempson/base16-vim'
 Plug 'airblade/vim-gitgutter'
@@ -403,3 +404,8 @@ call plug#end()
 
 " base16: set color scheme
 colorscheme base16-tomorrow-night
+
+" lightline: set color scheme
+let g:lightline = {
+    \'colorscheme': 'Tomorrow_Night',
+\}
