@@ -404,6 +404,7 @@ Plug 'edkolev/tmuxline.vim'
 Plug 'preservim/nerdtree'
 Plug 'chriskempson/base16-vim'
 Plug 'airblade/vim-gitgutter'
+Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 call plug#end()
 
 " base16: set color scheme
@@ -418,3 +419,7 @@ let g:lightline = {
 let g:tmuxline_theme = 'lightline'
 let g:tmuxline_powerline_separators = 0
 let g:tmuxline_preset = 'minimal'
+
+" vim-go: use gopls
+let g:go_def_mode='gopls'
+let g:go_info_mode='gopls'
