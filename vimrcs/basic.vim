@@ -164,6 +164,28 @@ set encoding=utf8
 " Use Unix as the standard file type
 set ffs=unix,dos,mac
 
+" @todo not working
+" Enable italics by defining their escape sequences.
+let &t_ZH="\<Esc>[3m"
+let &t_ZR="\<Esc>[23m"
+
+let &t_8f="\<Esc>[38;2;%lu;%lu;%lum"
+let &t_8b="\<Esc>[48;2;%lu;%lu;%lum"
+set termguicolors
+
+" Format comments in italic.
+highlight Comment cterm=italic gui=italic
+
+" https://vim.fandom.com/wiki/Change_cursor_shape_in_different_modes
+if empty($TMUX)
+    let &t_SI = "\<Esc>]50;CursorShape=1\x7"
+    let &t_SR = "\<Esc>]50;CursorShape=2\x7"
+    let &t_EI = "\<Esc>]50;CursorShape=0\x7"
+else
+    let &t_SI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=1\x7\<Esc>\\"
+    let &t_SR = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=2\x7\<Esc>\\"
+    let &t_EI = "\<Esc>Ptmux;\<Esc>\<Esc>]50;CursorShape=0\x7\<Esc>\\"
+endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Files, backups and undo
@@ -387,9 +409,22 @@ function! VisualSelection(direction, extra_filter) range
 endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => netrw
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" https://shapeshed.com/vim-netrw/
+let g:netrw_banner = 0
+"  let g:netrw_liststyle = 3
+"  let g:netrw_browse_split = 4
+"  let g:netrw_altv = 1
+"  let g:netrw_winsize = 25
+"  augroup ProjectDrawer
+"    autocmd!
+"    autocmd VimEnter * :Vexplore
+"  augroup END
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Plugins
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
 " vim-plug: install if needed
 if empty(glob('~/.vim/autoload/plug.vim'))
   silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
@@ -401,25 +436,87 @@ endif
 call plug#begin('~/.vim/plugged')
 Plug 'itchyny/lightline.vim'
 Plug 'edkolev/tmuxline.vim'
-Plug 'preservim/nerdtree'
-Plug 'chriskempson/base16-vim'
+Plug '/usr/local/opt/fzf'
+"  Plug 'vimpostor/vim-tpipeline' " @audit doesn't work
+Plug 'tinted-theming/base16-vim'
 Plug 'airblade/vim-gitgutter'
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 call plug#end()
 
 " base16: set color scheme
-colorscheme base16-tomorrow-night
+colorscheme base16-tomorrow-night-eighties
+
+" symbols:
+" big-asterisk: \uf069
+" bell: \ueaa2
+" bell-dot: \ueb9a
+" circle: \ueabc
+" dot: \uea71
+" cloud: \uebaa
+" coppy: \uebcc
+" disconnect: \uead0
+" vpn/remote: \ueb3a
+" remote explorer: \ueb39
+" search: \uea6d
+" terminal: \uea85
+" tmux: \uebc8
+" window: \ueb7f
+" fa-tag: \uf02b
+" fa-terminal: \uf120
+" fa-tasks: \uf0ae
+" window-min: \uf2d1
+" window-max: \ufd20
+" caps-lock: \ufb31
+" mdi-app: \ufb13
+" mdi-asterisk: \ufbc2
+" mdi-buffer: \ufb18
+" mdi-file-tree: \ufb44
+" mdi-git: \uf7a1
+" mdi-label: \uf814
+" mdi-label-outline: \uf815
+" mdi-memory: \uf85a
 
 " lightline: set color scheme
 let g:lightline = {
-    \'colorscheme': 'Tomorrow_Night',
-\}
+    \'colorscheme': 'Tomorrow_Night_Eighties'}
+let g:tmuxline_separators = {
+    \ 'left' : '\ue0bc',
+    \ 'left_alt': '\u2571',
+    \ 'right' : '\ue0ba',
+    \ 'right_alt' : '\u2571',
+    \ 'space' : ' '}
+let g:tmuxline_preset = {
+    \ 'a': '#S',
+    \ 'b': '#F',
+    \ 'c': '#{?client_prefix,#[fg=magenta],#{?pane_in_mode,#[fg=yellow],#{?pane_synchronized,#[fg=red],#[fg=green]}}}\uea71',
+    \ 'win': ['#I', '#W'],
+    \ 'cwin': ['#I', '#W'],
+    \ 'x': '#{cpu.pused} \uf85a #{mem.pused} \uf924#(uptime | cut -d "," -f 1 | cut -d " " -f 3-)',
+    \ 'y': ['%a', '%b %d'],
+    \ 'z': ['%R']}
 
 " tmuxline: set theme
-let g:tmuxline_theme = 'lightline'
-let g:tmuxline_powerline_separators = 0
-let g:tmuxline_preset = 'minimal'
+let g:tmuxline_theme = 'lightline_insert'
+"  let g:tmuxline_theme = 'zenburn'
 
 " vim-go: use gopls
 let g:go_def_mode='gopls'
 let g:go_info_mode='gopls'
+
+" Generate the fzf color theme
+"  - See https://github.com/junegunn/fzf/blob/master/ADVANCED.md#generating-fzf-color-theme-from-vim-color-schemes
+let g:fzf_colors =
+\ { 'fg':         ['fg', 'Normal'],
+  \ 'bg':         ['bg', 'Normal'],
+  \ 'preview-bg': ['bg', 'NormalFloat'],
+  \ 'hl':         ['fg', 'Comment'],
+  \ 'fg+':        ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
+  \ 'bg+':        ['bg', 'CursorLine', 'CursorColumn'],
+  \ 'hl+':        ['fg', 'Statement'],
+  \ 'info':       ['fg', 'PreProc'],
+  \ 'border':     ['fg', 'Ignore'],
+  \ 'prompt':     ['fg', 'Conditional'],
+  \ 'pointer':    ['fg', 'Exception'],
+  \ 'marker':     ['fg', 'Keyword'],
+  \ 'spinner':    ['fg', 'Label'],
+  \ 'header':     ['fg', 'Comment'] }
