@@ -292,6 +292,7 @@ set laststatus=2
 " Format the status line
 set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l\ \ Column:\ %c
 
+set showcmd
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Editing mappings
@@ -433,10 +434,10 @@ if empty(glob('~/.vim/autoload/plug.vim'))
 endif
 
 " vim-plug: load plugins
-call plug#begin('~/.vim/plugged')
+call plug#begin('~/.vim/plugged') " @todo can we use $HOME?
 Plug 'itchyny/lightline.vim'
 Plug 'edkolev/tmuxline.vim'
-Plug '/usr/local/opt/fzf'
+Plug '/opt/homebrew/bin/fzf' " @todo use env var?
 "  Plug 'vimpostor/vim-tpipeline' " @audit doesn't work
 Plug 'tinted-theming/base16-vim'
 Plug 'airblade/vim-gitgutter'
@@ -502,6 +503,8 @@ let g:tmuxline_theme = 'lightline_insert'
 " vim-go: use gopls
 let g:go_def_mode='gopls'
 let g:go_info_mode='gopls'
+
+" @todo learn: https://github.com/junegunn/fzf.vim
 
 " Generate the fzf color theme
 "  - See https://github.com/junegunn/fzf/blob/master/ADVANCED.md#generating-fzf-color-theme-from-vim-color-schemes
